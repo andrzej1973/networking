@@ -1,10 +1,8 @@
 /****************** CLIENT CODE ****************/
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #include <arpa/inet.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 
 #include <netinet/in.h>
@@ -12,9 +10,8 @@
 int main(){
 
   int network_socket; //socket descriptor
-  int connection_status; //stores socket connection status
 
-  /* create a socket with the following configuration
+  /* create a socket witcloseh the following configuration
      domain:AFINET: IPV4 address space (AFINET6 can be used for IPV6)
      type:SOCK_STREAM: Sequenced, reliable, connection-based byte streams
      protocol: 0: select protocol automatically
@@ -32,14 +29,21 @@ server_address.sin_port = htons(9092);
 server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 if (connect(network_socket, (struct sockaddr *) &server_address, sizeof(server_address))== -1) {
-  printf("Error when connecting to socket...");
+  printf("Error when connecting to socket...\n");
   return 1;
 }
 
 /* receive data from server */
 char receive_buffer [255];
 
-recv(network_socket,&receive_buffer,sizeof(receive_buffer),0);
+if (recv(network_socket,&receive_buffer,sizeof(receive_buffer),0) == -1){
+    printf("Error when receiving data from the server...\n");
+    return 1;
+} else{
+    printf("data received from server: %s\n",receive_buffer);
+}
+
+//close(network_socket);
 
   return 0;
 }

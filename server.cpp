@@ -1,48 +1,78 @@
 /****************** SERVER CODE ****************/
 
 #include <stdio.h>
+
 #include <arpa/inet.h>
 #include <sys/socket.h>
+
 #include <netinet/in.h>
-#include <string.h>
+#include <unistd.h>
+
 
 int main(){
-  int welcomeSocket, newSocket;
-  char buffer[1024];
-  struct sockaddr_in serverAddr;
-  struct sockaddr_storage serverStorage;
-  socklen_t addr_size;
 
-  /*---- Create the socket. The three arguments are: ----*/
-  /* 1) Internet domain 2) Stream socket 3) Default protocol (TCP in this case) */
-  welcomeSocket = socket(PF_INET, SOCK_STREAM, 0);
+  pid_t pid = getpid();
+  printf("Server application with pid=%lu has started!\n",(long)pid);
+
+  int server_socket; //socket descriptor
+  char server_msg[256]="You have received the server connection!\n";
+
+  /* create a socket with the following configuration
+     domain:AFINET: IPV4 address space (AFINET6 can be used for IPV6)
+     type:SOCK_STREAM: Sequenced, reliable, connection-based byte streams
+     protocol: 0: select protocol automatically
+  */ 
+  server_socket=socket(AF_INET,SOCK_STREAM,0);
+
+struct sockaddr_in server_address;
+
+/* Configure settings of the server address struct */
+/* Address family = Internet */
+server_address.sin_family = AF_INET;
+/* Set port number, using htons function to use proper byte order */
+server_address.sin_port = htons(9092);
+/* Set IP address to localhost */
+server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+/* Bind the socket to specified IP address and port */ 
+if (bind(server_socket, (struct sockaddr *) &server_address, sizeof(server_address))== -1) {
+  printf("Error when binding socket to IP address and port...\n");
+  return 1;
+}/* code */
+
+/* Prepare for connections from clients */
+/* Second argument indicates how many connections are qued before they are becoming rejected by the socket */
+if (listen (server_socket, 5) == -1){/* code */
+  printf("Incomming connnection has been refused...\n");
+  return 1;
+  }else
+  {
+    printf("Successfuly prepared to listen from clients and now awaiting connection from client\n");
+  }
   
-  /*---- Configure settings of the server address struct ----*/
-  /* Address family = Internet */
-  serverAddr.sin_family = AF_INET;
-  /* Set port number, using htons function to use proper byte order */
-  serverAddr.sin_port = htons(7891);
-  /* Set IP address to localhost */
-  serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-  /* Set all bits of the padding field to 0 */
-  memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);  
+  int client_socket;
 
-  /*---- Bind the address struct to the socket ----*/
-  bind(welcomeSocket, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
+/* Await for incomming connections from clients */
+  client_socket=accept(server_socket,NULL,NULL);
 
-  /*---- Listen on the socket, with 5 max connection requests queued ----*/
-  if(listen(welcomeSocket,5)==0)
-    printf("Listening\n");
-  else
-    printf("Error\n");
-
-  /*---- Accept call creates a new socket for the incoming connection ----*/
-  addr_size = sizeof serverStorage;
-  newSocket = accept(welcomeSocket, (struct sockaddr *) &serverStorage, &addr_size);
-
-  /*---- Send message to the socket of the incoming connection ----*/
-  strcpy(buffer,"Hello World\n");
-  send(newSocket,buffer,13,0);
-  //write(newSocket,buffer,13);
-  return 0;
+if (client_socket==-1){
+  printf("Error when connection from server has been received...\n");
+  return 1;
+}else{
+  printf("Connection successfuly recieved, client socket has been opened\n");
 }
+
+/* Send a message from server to client */
+if(send(client_socket,server_msg,sizeof(server_msg),0)==-1){
+  printf("Sending data to the client has not been successful...\n");
+  return 1;
+} else
+{
+  printf("Data successfuly send to the client\n");
+}
+
+
+  return 0;
+
+}
+
