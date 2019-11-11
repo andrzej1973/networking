@@ -51,15 +51,19 @@ if (listen (server_socket, 5) == -1){/* code */
   }
   
   int client_socket;
+  struct sockaddr_in client_address;
+  int client_address_len = sizeof(client_address);
 
 /* Await for incomming connections from clients */
-  client_socket=accept(server_socket,NULL,NULL);
+  client_socket=accept(server_socket, (struct sockaddr *) &client_address, (unsigned int *) &client_address_len);
 
 if (client_socket==-1){
   printf("Error when connection from server has been received...\n");
   return 1;
 }else{
   printf("Connection successfuly recieved, client socket has been opened\n");
+  printf("  Client IP: %s\n", inet_ntoa(client_address.sin_addr));
+  printf("  Client Port: %hu\n", ntohs(client_address.sin_port));
 }
 
 /* Send a message from server to client */
@@ -71,6 +75,8 @@ if(send(client_socket,server_msg,sizeof(server_msg),0)==-1){
   printf("Data successfuly send to the client\n");
 }
 
+close(server_socket);
+close(client_socket);
 
   return 0;
 
