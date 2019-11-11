@@ -1,7 +1,7 @@
 /****************** SERVER CODE ****************/
 
 #include <stdio.h>
-#include <arpa/inet.h> 
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
@@ -43,6 +43,6 @@ int main(){
   /*---- Send message to the socket of the incoming connection ----*/
   strcpy(buffer,"Hello World\n");
   send(newSocket,buffer,13,0);
-
+  //write(newSocket,buffer,13);
   return 0;
 }
