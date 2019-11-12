@@ -53,7 +53,7 @@ if (listen (server_socket, 5) == -1){/* code */
   int client_socket;
   struct sockaddr_in client_address;
   int client_address_len = sizeof(client_address);
-
+port number from accept
 /* Await for incomming connections from clients */
   client_socket=accept(server_socket, (struct sockaddr *) &client_address, (unsigned int *) &client_address_len);
 
@@ -82,3 +82,4 @@ close(client_socket);
 
 }
 
+port number from accept

@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 
 #include <netinet/in.h>
+#include <unistd.h>
 
 int main(){
 
@@ -43,7 +44,7 @@ if (recv(network_socket,&receive_buffer,sizeof(receive_buffer),0) == -1){
     printf("data received from server: %s\n",receive_buffer);
 }
 
-//close(network_socket);
+close(network_socket);
 
   return 0;
 }
