@@ -37,11 +37,22 @@ if (connect(network_socket, (struct sockaddr *) &server_address, sizeof(server_a
 /* receive data from server */
 char receive_buffer [255];
 
-if (recv(network_socket,&receive_buffer,sizeof(receive_buffer),0) == -1){
+printf("Press <ENTER> to stop the client application\n");
+
+int idx=0;
+
+//while (getchar(){
+while (idx<3){
+
+  printf("Hi from while loop\n");
+
+  if (recv(network_socket,&receive_buffer,sizeof(receive_buffer),0) == -1){
     printf("Error when receiving data from the server...\n");
     return 1;
-} else{
+  } else{
     printf("data received from server: %s\n",receive_buffer);
+    idx++;
+  }
 }
 
 close(network_socket);

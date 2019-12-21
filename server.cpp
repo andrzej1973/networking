@@ -54,8 +54,10 @@ if (listen (server_socket, 5) == -1){/* code */
   struct sockaddr_in client_address;
   int client_address_len = sizeof(client_address);
 
+
+
 /* Await for incomming connections from clients */
-  client_socket=accept(server_socket, (struct sockaddr *) &client_address, (unsigned int *) &client_address_len);
+client_socket=accept(server_socket, (struct sockaddr *) &client_address, (unsigned int *) &client_address_len);
 
 if (client_socket==-1){
   printf("Error when connection from server has been received...\n");
@@ -66,13 +68,25 @@ if (client_socket==-1){
   printf("  Client Port: %hu\n", ntohs(client_address.sin_port));
 }
 
-/* Send a message from server to client */
-if(send(client_socket,server_msg,sizeof(server_msg),0)==-1){
-  printf("Sending data to the client has not been successful...\n");
-  return 1;
-} else
-{
-  printf("Data successfuly send to the client\n");
+printf("Press <ENTER> to stop the server application\n");
+unsigned int sleep_interval=5000000; //sleep interval in microseconds
+
+int idx=3;
+
+//while (getchar()!='\n'){
+while (idx<3){
+  /* Send a message from server to client */
+  if(send(client_socket,server_msg,sizeof(server_msg),0)==-1){
+    printf("Sending data to the client has not been successful...\n");
+    return 1;
+  } else
+  {
+    printf("Message #%n, successfuly send to the client\n",idx);
+    printf("Next message will be sent to the client in %d microseconds\n",sleep_interval);
+    usleep(sleep_interval);
+    idx++;
+  }
+
 }
 
 close(server_socket);
