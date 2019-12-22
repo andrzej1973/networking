@@ -15,7 +15,8 @@ int main(){
   printf("Server application with pid=%lu has started!\n",(long)pid);
 
   int server_socket; //socket descriptor
-  char server_msg[255]="<-----Hallo from Server!!! You have received the server connection!!!------>";
+  //char server_msg[255]="<-----Hallo from Server!!! You have received the server connection!!!------>";
+  char server_msg[255];
 
   /* create a socket with the following configurationYou have received 
      domain:AFINET: IPV4 address space (AFINET6 can be used for IPV6)
@@ -75,6 +76,7 @@ int idx=0;
 
 //while (getchar()!='\n'){
 while (idx<3){
+  sprintf(server_msg,"Msg no.: %d: <-------Hallo from the Server--------->",idx);
   /* Send a message from server to client */
   if(send(client_socket,server_msg,sizeof(server_msg),0)==-1){
     printf("Sending data to the client has not been successful...\n");

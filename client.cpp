@@ -1,6 +1,7 @@
 /****************** CLIENT CODE ****************/
 
 #include <stdio.h>
+#include <string.h>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -38,22 +39,21 @@ if (connect(network_socket, (struct sockaddr *) &server_address, sizeof(server_a
 /* receive data from server */
 char receive_buffer [255];
 
-
-printf("Press <ENTER> to stop the client application\n");
-
 int idx=0;
 
-//while (getchar(){
-while (idx<3){
+while (idx<10){
 
-  printf("Hi from while loop\n");
-
-  if (recv(network_socket,&receive_buffer,sizeof(receive_buffer),0) == -1){
-    printf("Error when receiving data from the server...\n");
-    return 1;
-  } else{
-    printf("data received from server: %s\n",receive_buffer);
-    idx++;
+  switch (recv(network_socket,&receive_buffer,sizeof(receive_buffer),0)){
+    case -1:
+      printf("Error when receiving data from the server...\n");
+      return 1;
+    case 0:
+      printf("Connection has been closed by the server...\n");
+      idx=10;
+      break;
+    default:
+      printf("data received from server: %s\n",receive_buffer);
+      idx++;
   }
 }
 
