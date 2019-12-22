@@ -15,9 +15,9 @@ int main(){
   printf("Server application with pid=%lu has started!\n",(long)pid);
 
   int server_socket; //socket descriptor
-  char server_msg[256]="You have received the server connection!\n";
+  char server_msg[255]="<-----Hallo from Server!!! You have received the server connection!!!------>";
 
-  /* create a socket with the following configuration
+  /* create a socket with the following configurationYou have received 
      domain:AFINET: IPV4 address space (AFINET6 can be used for IPV6)
      type:SOCK_STREAM: Sequenced, reliable, connection-based byte streams
      protocol: 0: select protocol automatically
@@ -71,7 +71,7 @@ if (client_socket==-1){
 printf("Press <ENTER> to stop the server application\n");
 unsigned int sleep_interval=5000000; //sleep interval in microseconds
 
-int idx=3;
+int idx=0;
 
 //while (getchar()!='\n'){
 while (idx<3){
@@ -81,7 +81,7 @@ while (idx<3){
     return 1;
   } else
   {
-    printf("Message #%n, successfuly send to the client\n",idx);
+    printf("Message #%d, successfuly send to the client\n",idx);
     printf("Next message will be sent to the client in %d microseconds\n",sleep_interval);
     usleep(sleep_interval);
     idx++;

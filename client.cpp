@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
+
 int main(){
 
   int network_socket; //socket descriptor
@@ -36,6 +37,7 @@ if (connect(network_socket, (struct sockaddr *) &server_address, sizeof(server_a
 
 /* receive data from server */
 char receive_buffer [255];
+
 
 printf("Press <ENTER> to stop the client application\n");
 
