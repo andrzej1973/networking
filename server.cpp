@@ -1,4 +1,26 @@
-/****************** SERVER CODE ****************/
+/***************************************************************************
+ *
+ *  Project
+ *                            Socket Programming Example
+ *
+ * Copyright (C) 2019 - 2020, Andrzej Mazur, <andrzej@mazur.info>
+ *
+ * This software is licensed as described in the file COPYING, which
+ * you should have received as part of this distribution. The terms
+ * are also available at https://mazur.info/docs/copyright.html.
+ *
+ * You may opt to use, copy, modify, merge, publish, distribute and/or sell
+ * copies of the Software, and permit persons to whom the Software is
+ * furnished to do so, under the terms of the COPYING file.
+ *
+ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
+ * KIND, either express or implied.
+ *
+ ***************************************************************************/
+
+
+
+/****************************** SERVER CODE ********************************/
 
 #include <stdio.h>
 
@@ -8,11 +30,12 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
+#define PROGRAM_NAME "server"
 
 int main(int argc, char *argv[]){
 
   pid_t pid = getpid();
-  printf("Server application with pid=%lu has started!\n",(long)pid);
+  printf("%s: process:pid=%lu has started!\n",PROGRAM_NAME,(long)pid);
 
  
   unsigned int sleep_interval; //sleep interval in microseconds
@@ -34,7 +57,17 @@ int main(int argc, char *argv[]){
       //program called with one parameter
       if (sscanf(argv[1], "%u", &sleep_interval)!=1){
         /* error converting supplied parameter into unsigned integer */
-        printf("Supplied parameter was incorrect...\n");
+
+        printf("%s: Supplied parameter was incorrect...\n",PROGRAM_NAME);
+        printf("\n");
+        printf("Usage:\n");
+        printf("./%s [options]\n",PROGRAM_NAME);
+        printf("    where options include values:\n");
+        printf("        -h or --help           -print this message\n");
+        printf("        -v or --version        -print version of this program\n");
+        printf("        -sleep <microseconds>  -set send interval for messages sent to clients\n");
+        printf("\n");
+        printf("Mail bug reports and suggestions to <andrzej@mazur.info>\n");
         return 1;
       }
       break;
