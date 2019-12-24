@@ -9,10 +9,42 @@
 #include <unistd.h>
 
 
-int main(){
+int main(int argc, char *argv[]){
 
   pid_t pid = getpid();
   printf("Server application with pid=%lu has started!\n",(long)pid);
+
+ 
+  unsigned int sleep_interval; //sleep interval in microseconds
+
+  switch(argc){
+        /*
+    program param1 param2 ... paramn
+    argv[0] - program
+    argv[1] - param1
+    argv[2] - param2
+    ...
+    argv[n] - paramn
+    */
+    case 1:
+      //program called with no parameters, use default sleep time
+      sleep_interval=5000000; //sleep interval in microseconds
+      break;
+    case 2:
+      //program called with one parameter
+      if (sscanf(argv[1], "%u", &sleep_interval)!=1){
+        /* error converting supplied parameter into unsigned integer */
+        printf("Supplied parameter was incorrect...\n");
+        return 1;
+      }
+      break;
+    default:
+      printf("Incorrect number of parameters! Exiting the program ...\n");
+      return 1;
+  }
+
+printf("Sleep interval has been set to: %u\n", sleep_interval);
+ 
 
   int server_socket; //socket descriptor
   //char server_msg[255]="<-----Hallo from Server!!! You have received the server connection!!!------>";
@@ -69,12 +101,11 @@ if (client_socket==-1){
   printf("  Client Port: %hu\n", ntohs(client_address.sin_port));
 }
 
-printf("Press <ENTER> to stop the server application\n");
-unsigned int sleep_interval=5000000; //sleep interval in microseconds
+//printf("Press <ENTER> to stop the server application\n");
 
 int idx=0;
 
-//while (getchar()!='\n'){
+
 while (idx<3){
   sprintf(server_msg,"Msg no.: %d: <-------Hallo from the Server--------->",idx);
   /* Send a message from server to client */
