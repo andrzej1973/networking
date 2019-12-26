@@ -33,9 +33,6 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
-//enable debuging by setting DEBUG to 1
-
-
 /*
 Debug macro definition
 
@@ -51,7 +48,7 @@ is anything other than a comma.
 see https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html for more info
 */
 
-//#define DEBUG
+//#define DEBUG  //comment this line to diable debug info
 
 #ifdef DEBUG
 #define debug_print(fmt, ...) \
@@ -96,7 +93,6 @@ void help(void)
 void version(void)
 {
   printf("%s ver. %s\n",PROGRAM_NAME, PROGRAM_VERSION);
-  printf("\n");
 }
 
 typedef struct CommandLineParameters_ {
@@ -130,7 +126,7 @@ static CommandLineParameters parseParameters(int argc, char** argv) {
      debug_print("parsed parameter:%s\n",argv[i]);
 
      if (sscanf(argv[i], "%s", &currentParamStr)!=1){
-        /* error - converting supplied parameter into string */
+        /* Error - converting supplied parameter into string */
         debug_print("error - converting supplied parameter into string\n");
         flags.error=true;
         return flags;
@@ -138,9 +134,10 @@ static CommandLineParameters parseParameters(int argc, char** argv) {
 
       if ((strcmp(currentParamStr,"-h")==0) || (strcmp(currentParamStr,"--help")==0))
       {
+      //parsing help parameter
         if (argc>2)
         {
-          /*error - help parameter called not alone*/
+          /*Error - help parameter called not alone*/
           debug_print("error - help parameter called not alone\n");
           flags.error=true;
           return flags;
@@ -149,11 +146,12 @@ static CommandLineParameters parseParameters(int argc, char** argv) {
       } 
       else 
       { 
+      //parsing version parameter
         if ((strcmp(currentParamStr,"-v")==0) || (strcmp(currentParamStr,"--version")==0))
         {
           if (argc>2)
           {
-            /*error - version parameter called not alone*/
+            /*Error - version parameter called not alone*/
             debug_print("error - version parameter called not alone\n");
             flags.error=true;
             return flags;
@@ -161,11 +159,42 @@ static CommandLineParameters parseParameters(int argc, char** argv) {
           flags.displayVersion=true;
         } 
         else
-        { 
+        {
+          if ((strcmp(currentParamStr,"-s")==0) || (strcmp(currentParamStr,"--sleep-interval")==0))
+          {
+            debug_print("parsing sleep!\n");
+            i++; //move to next parameter to parse
+            if (i<=(argc-1))
+            {
+              unsigned int sleep_val;
+              if (sscanf(argv[i], "%u", &sleep_val)!=1)
+              {
+                /* Error - converting supplied parameter into unsigned integer */
+                debug_print("Error - converting supplied parameter into unsigned integer\n");
+                flags.error=true;
+                return flags;
+              }
+              else
+              {
+                flags.sleepInterval=sleep_val;
+              }
+            }
+            else
+            {
+              /* Error - sleep interval parameter value missing */
+              debug_print("Error - sleep interval parameter value missing\n");
+              flags.error=true;
+              return flags;
+            }
+            
+          }
+          else
+          { 
           /*error - unspecified parameter provided*/
           debug_print("error - unspecified parameter provided\n");
           flags.error=true;
           return flags;
+          }
         }
       }
    }
@@ -279,7 +308,6 @@ if (client_socket==-1){
 
 int idx=0;
 
-
 while (idx<3){
   sprintf(server_msg,"Msg no.: %d: <-------Hallo from the Server--------->",idx);
   /* Send a message from server to client */
@@ -299,6 +327,6 @@ while (idx<3){
 close(server_socket);
 close(client_socket);
 
-  return 0;
+return 0;
 
 }
