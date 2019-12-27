@@ -33,6 +33,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
+
 /*
 Debug macro definition
 
@@ -48,7 +49,7 @@ is anything other than a comma.
 see https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html for more info
 */
 
-//#define DEBUG  //comment this line to diable debug info
+#define DEBUG  //comment this line to diable debug info
 
 #ifdef DEBUG
 #define debug_print(fmt, ...) \
@@ -61,6 +62,38 @@ see https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html for more info
 
 #define PROGRAM_NAME "server"
 #define PROGRAM_VERSION "1.0.0"
+
+#include <pthread.h>
+
+/*
+pthread.h is required to build multi-threaded application
+When compiling the program add -lpthread to the compile command. 
+ie: gcc server.cpp -o server -lpthread
+
+or in VisualStudioCode in:
+$HOME/.config/Code/User/tasks.json
+add:
+
+
+*/
+
+/* this variable is a reference to the second thread */
+pthread_t keyPressDetectionThread;
+
+/* this function is run by the second thread */
+void *keyPressDetectionLoop(void *keyPressedVoidPtr)
+{
+    bool *keyPressedPtr = (bool *)keyPressedVoidPtr;
+    char c;
+    debug_print("Waiting for key press\n");
+    c = getchar();
+    *keyPressedPtr=true;
+    debug_print("Key press detected\n");
+  /* the function must return something - NULL is fine */
+  return NULL;
+
+}
+
 
 struct helptxt {
   const char *opt;
@@ -304,11 +337,27 @@ if (client_socket==-1){
   printf("%s:   Client Port: %hu\n",PROGRAM_NAME, ntohs(client_address.sin_port));
 }
 
-//printf("Press <ENTER> to stop the server application\n");
+printf("Press <ENTER> to stop the server application\n");
+
+
+bool keyPressed=false;
+
+/* create a second thread which executes keyPressDetectionLoop function */
+if(pthread_create(&keyPressDetectionThread, NULL, keyPressDetectionLoop, &keyPressed)) {
+  debug_print("Error - creating thread failed\n");
+  return 1;
+}
+else
+{
+  debug_print("New Thread Successfuly created\n");
+}
+
 
 int idx=0;
 
-while (idx<3){
+//while (idx<3){
+while (keyPressed!=true){
+
   sprintf(server_msg,"Msg no.: %d: <-------Hallo from the Server--------->",idx);
   /* Send a message from server to client */
   if(send(client_socket,server_msg,sizeof(server_msg),0)==-1){
@@ -321,7 +370,9 @@ while (idx<3){
     usleep(sleep_interval);
     idx++;
   }
-
+  if (keyPressed){
+    debug_print("Key press detected, quiting %s program...\n",PROGRAM_NAME);
+  }
 }
 
 close(server_socket);
