@@ -33,31 +33,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 
-
-/*
-Debug macro definition
-
-The do { ... } while (0) idiom ensures that the code acts like a statement (function call). 
-The unconditional use of the code ensures that the compiler always checks that your debug 
-code is valid — but the optimizer will remove the code when DEBUG is 0.
-"fmt" is a printf format string. "..." is whatever extra arguments fmt requires 
-(possibly nothing).
-__VA_ARGS__ - means variable arguments
-##__VA_ARGS__ - comma before the ‘##’ will be deleted. This does not happen if 
-empty argument is passed, nor does it happen if the token preceding ‘##’ 
-is anything other than a comma. 
-see https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html for more info
-*/
-
-#define DEBUG  //comment this line to diable debug info
-
-#ifdef DEBUG
-#define debug_print(fmt, ...) \
-    fprintf(stderr, "%s() in %s, line %i: " fmt "\n", \
-        __func__, __FILE__, __LINE__, ##__VA_ARGS__)
-#else
-#define debug_print(fmt, ...) ((void)0)
-#endif
+#include "sockets_debug.h"
 
 
 #define PROGRAM_NAME "server"
@@ -68,7 +44,8 @@ see https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html for more info
 /*
 pthread.h is required to build multi-threaded application
 When compiling the program add -lpthread to the compile command. 
-ie: gcc server.cpp -o server -lpthread
+ie: g++ server.cpp -o server -lpthread
+gcc generates identity error...
 
 or in VisualStudioCode in:
 $HOME/.config/Code/User/tasks.json
