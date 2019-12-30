@@ -1,4 +1,6 @@
+#g++ ./src/server/server.cpp -o ./server -lpthread
 # make file to compile sockets server program
+
 
 #directory where includes are stored
 IDIR =./src/common ./src/server
@@ -19,10 +21,10 @@ LDIR =./src/common ./src/server
 
 LIBS=-lpthread
 
-_DEPS = hellomake.h
+_DEPS = socket_debug.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = hellomake.o hellofunc.o 
+_OBJ = server.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
