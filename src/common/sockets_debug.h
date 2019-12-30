@@ -38,7 +38,13 @@ is anything other than a comma.
 see https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html for more info
 */
 
+#ifndef SOCKETS_DEBUG_H_INCLUDED 
+#define SOCKETS_DEBUG_H_INCLUDED
+
+
 #define DEBUG  //comment this line to diable debug info
+
+
 
 #ifdef DEBUG
 #define debug_print(fmt, ...) \
@@ -46,4 +52,7 @@ see https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html for more info
         __func__, __FILE__, __LINE__, ##__VA_ARGS__)
 #else
 #define debug_print(fmt, ...) ((void)0)
+#endif
+
+
 #endif
